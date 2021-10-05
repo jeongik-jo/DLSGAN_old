@@ -4,10 +4,10 @@ import tensorflow as tf
 #tf.config.experimental.enable_tensor_float_32_execution(False)
 import tensorflow.keras as kr
 
-mapper_optimizer = kr.optimizers.Adam(learning_rate=0.001 * 0.01, beta_1=0.0, beta_2=0.99)
-decoder_optimizer = kr.optimizers.Adam(learning_rate=0.001, beta_1=0.0, beta_2=0.99)
-discriminator_optimizer = kr.optimizers.Adam(learning_rate=0.001, beta_1=0.0, beta_2=0.99)
-lr_decay = 0.02
+mapper_optimizer = kr.optimizers.Adam(learning_rate=0.001 * 0.01, beta_1=0.0, beta_2=0.99) # optimizer for mapper of generator
+decoder_optimizer = kr.optimizers.Adam(learning_rate=0.001, beta_1=0.0, beta_2=0.99) # optimizer for decoder of generator
+discriminator_optimizer = kr.optimizers.Adam(learning_rate=0.001, beta_1=0.0, beta_2=0.99) # optimizer for discriminator (and encoder)
+lr_decay = 0.02 # learning rate decay per epoch
 
 inception_model = tf.keras.applications.InceptionV3(weights='imagenet', pooling='avg', include_top=False)
 
@@ -17,28 +17,28 @@ image_resolution = 128
 latent_vector_dim = 512
 
 
-gp_weight = 10.0
+gp_weight = 10.0 # r1 loss weight
 dis_enc_weight = 1.0
 gen_enc_weight = 1.0
-is_dls_gan = True
-var_vector_size = 512
+is_dls_gan = True # if false, use MSE
+var_vector_size = 512 # DLSGAN traces past "var_vector_size * batch_size" samples for variance vector
 
 
 batch_size = 16
-save_image_size = 8
+save_image_size = 8 # save_image_size^2 is number of samples for saved images
 
-train_data_size = -1
-test_data_size = -1
+train_data_size = -1 # train data size. If -1, use all samples
+test_data_size = -1 # test data size. If -1, use all samples
 shuffle_test_dataset = True
 epochs = 50
 
-load_model = False
+load_model = False # if True, use saved model in ./models. if False, create new model.
 
 evaluate_model = True
-fid_batch_size = batch_size
+fid_batch_size = batch_size # batch size for calculate FID
 epoch_per_evaluate = 1
 
-is_latent_normal = True
+is_latent_normal = True # if True, Z~N(0, 1). if False, z~U(-sqrt(3), sqrt(3))
 
 if is_latent_normal:
     def latent_dist_func(shape):
